@@ -1,0 +1,72 @@
+<div class="demo-container">
+  <h2>Angular Signals Gelişmiş Alışveriş Sepeti Demo</h2>
+
+  <!-- Ürün Listesi -->
+  <section>
+    <h3>Ürün Listesi</h3>
+    <div class="product-list">
+      <div *ngFor="let product of products">
+        <span>{{ product.name }} - ${{ product.price }}</span>
+        <button (click)="addToCart(product)">Sepete Ekle</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sepet Görünümü -->
+  <section>
+    <h3>Sepetiniz</h3>
+    <div class="cart-items">
+      <div *ngFor="let item of cartItems()">
+        <span>
+          {{ item.product.name }} ({{ item.quantity }}) - ${{
+            item.product.price * item.quantity
+          }}
+        </span>
+        <input
+          type="number"
+          [value]="item.quantity"
+          min="1"
+          #qtyInput
+          (change)="updateQuantity(item.product.id, qtyInput.valueAsNumber)"
+        />
+        <button (click)="removeFromCart(item.product.id)">Kaldır</button>
+      </div>
+      <p>
+        <strong>Toplam Ürün: {{ totalItems() }}</strong>
+      </p>
+      <p>
+        <strong>Sepet Toplamı: ${{ cartTotal() }}</strong>
+      </p>
+      <p *ngIf="discount() > 0">
+        <strong>İndirim: ${{ discount() }}</strong>
+      </p>
+      <p>
+        <strong>Ödenecek Tutar: ${{ discountedTotal() }}</strong>
+      </p>
+      <button (click)="clearCart()">Sepeti Temizle</button>
+    </div>
+  </section>
+
+  <!-- Teslimat Seçenekleri -->
+  <section>
+    <h3>Teslimat Seçeneği</h3>
+    <p>Seçili: {{ selectedOption() }}</p>
+    <div>
+      <button
+        *ngFor="let option of shippingOptions(); let i = index"
+        (click)="changeShipping(i)"
+      >
+        {{ option }}
+      </button>
+    </div>
+  </section>
+
+  <!-- Sipariş Gönderimi -->
+  <section>
+    <h3>Sipariş Gönderimi</h3>
+    <button (click)="submitOrder()">Siparişi Gönder</button>
+    <p *ngIf="isSending()">Sipariş gönderiliyor...</p>
+    <p *ngIf="isLoadingNewCart()">Sipariş güncelleniyor...</p>
+    <p *ngIf="orderResource.error()">Sipariş gönderiminde hata oluştu!</p>
+  </section>
+</div>
