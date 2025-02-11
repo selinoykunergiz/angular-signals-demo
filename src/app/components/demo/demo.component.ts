@@ -27,6 +27,7 @@ interface CartItem {
   imports: [CommonModule],
 })
 export class DemoComponent {
+
   // --- Ürün Listesi ---
   // Statik demo verisi: Ürünlerin id, ad ve fiyat bilgileri
   products: Product[] = [
@@ -34,6 +35,7 @@ export class DemoComponent {
     { id: 2, name: 'Ürün B', price: 40 },
     { id: 3, name: 'Ürün C', price: 35 },
   ];
+
   isSending = signal<boolean>(false);
 
   // --- Sepet İşlemleri ---
@@ -69,7 +71,7 @@ export class DemoComponent {
   // discountedTotal: İndirim uygulandıktan sonraki ödenecek toplam tutarı hesaplar.
   discountedTotal = computed(() => this.cartTotal() - this.discount());
 
-  // effect(): Sepet toplamı 100 TL’ye ulaştığında, konsola bildirim yapar.
+  // effect(): Sepet toplamı 100 TL’ye ulaştığında, console.log atar.
   constructor(private cdr: ChangeDetectorRef) {
     effect(() => {
       if (this.cartTotal() >= 100) {
@@ -118,8 +120,9 @@ export class DemoComponent {
   }
 
   // --- Teslimat Seçenekleri ---
-  // shippingOptions: Teslimat seçeneklerini içeren sinyal.
+  // shippingOptions: Teslimat seçeneklerini içeren signal.
   shippingOptions = signal(['Kara', 'Hava', 'Deniz']);
+
   // linkedSignal kullanılarak, varsayılan teslimat seçeneği otomatik olarak belirlenir.
   selectedOption = linkedSignal(() => this.shippingOptions()[0]);
 
@@ -128,11 +131,10 @@ export class DemoComponent {
   }
 
   // --- Sipariş Gönderimi (resource()) ---
-  // orderResource: Sipariş gönderimi için asenkron veri yükleme simülasyonu.
+  // orderResource: Sipariş gönderimi için asenkron veri yükleme.
   orderResource = resource({
     // request fonksiyonu: Sepet verilerindeki değişikliklere bağlı olarak tetiklenir.
     request: () => ({ items: this.cartItems() }),
-    // loader fonksiyonu: API çağrısı simülasyonu; gecikme eklenerek gerçek dünya API deneyimi taklit edilir.
     loader: async ({ request, abortSignal }) => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       this.isSending.set(false);
@@ -145,15 +147,10 @@ export class DemoComponent {
     try {
       // Siparişi gönderme sürecinin başladığını belirtmek için isSending'i true yapıyoruz
       this.isSending.set(true);
-
-      // Siparişi gönderiyoruz, bu işlem async olduğu için await ile bekliyoruz
       const result = this.orderResource.value();
-
-      // Sipariş başarılı ise sepeti temizliyoruz
       console.log('Sipariş gönderildi:', result);
       this.clearCart();
     } catch (error) {
-      // Hata durumunda bir mesaj gösterebiliriz
       console.error('Sipariş gönderilirken hata oluştu:', error);
     }
   }
